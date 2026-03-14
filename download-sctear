@@ -122,7 +122,7 @@ echo "Thank you for installing SCTEAR!"
 echo
 echo "To run the commands, run this first:"
 echo
-echo "export SCTEAR_ROOT = \$PREFIX/opt/sctear-root/sctear.sh"
+echo "export SCTEAR_ROOT=\$PREFIX/opt/sctear-root/sctear.sh"
 echo
 echo "Then run:"
 echo
