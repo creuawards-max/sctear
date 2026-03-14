@@ -1,0 +1,129 @@
+#!/data/data/com.termux/files/usr/bin/bash
+
+PREFIX=/data/data/com.termux/files/usr
+INSTALL_DIR=$PREFIX/opt/sctear-root
+SCTEAR_BIN=$INSTALL_DIR/sctear.sh
+
+clear
+
+echo "Initializing SCTEAR Installer..."
+
+sleep 2
+
+cat << "EOF"
+
+        /\_/\ 
+       ( o.o )
+       > ^ <
+     SCTEAR Linux
+
+EOF
+
+echo "Preparing installation..."
+sleep 2
+
+progress_bar () {
+    for i in {1..100}
+    do
+        printf "\rInstalling: ["
+        for j in $(seq 1 $i); do printf "#"; done
+        for j in $(seq $i 100); do printf " "; done
+        printf "] %d%%" $i
+        sleep 0.6
+    done
+    echo
+}
+
+progress_bar
+
+echo "Creating directories..."
+
+mkdir -p $INSTALL_DIR
+mkdir -p $INSTALL_DIR/data
+mkdir -p $INSTALL_DIR/distros
+mkdir -p $INSTALL_DIR/saves
+
+sleep 2
+
+cat << 'EOF' > $SCTEAR_BIN
+#!/data/data/com.termux/files/usr/bin/bash
+
+ROOT=$PREFIX/opt/sctear-root
+
+generate_code() {
+    echo "sp_$(shuf -i 1000000-9999999 -n 1)_$(shuf -i 100-999 -n 1)_$(shuf -i 1000-9999 -n 1)"
+}
+
+case $1 in
+
+save)
+CODE=$(generate_code)
+mkdir -p $ROOT/saves/$CODE
+cp -r $ROOT/data/* $ROOT/saves/$CODE 2>/dev/null
+echo "Data saved!"
+echo "Save Code: $CODE"
+;;
+
+load)
+CODE=$2
+if [ -d "$ROOT/saves/$CODE" ]; then
+rm -rf $ROOT/data/*
+cp -r $ROOT/saves/$CODE/* $ROOT/data/
+echo "Save loaded successfully."
+else
+echo "Invalid save code."
+fi
+;;
+
+add-distro)
+FILE=$2
+cp "$FILE" $ROOT/distros/
+echo "Custom distro added."
+;;
+
+install-distro)
+FILE=$2
+mkdir -p $ROOT/data/distro
+cp "$ROOT/distros/$FILE" $ROOT/data/distro/
+echo "Distro installed."
+;;
+
+load-distro)
+echo "Loading distro..."
+sleep 2
+echo "Boot successful."
+;;
+
+help)
+echo "SCTEAR Commands:"
+echo "sctear save"
+echo "sctear load CODE"
+echo "sctear add-distro file.bin"
+echo "sctear install-distro file.bin"
+echo "sctear load-distro"
+;;
+
+*)
+echo "SCTEAR Linux"
+echo "Run: sctear help"
+;;
+
+esac
+EOF
+
+chmod +x $SCTEAR_BIN
+
+echo
+echo "Installation finishing..."
+sleep 3
+
+echo
+echo "Thank you for installing SCTEAR!"
+echo
+echo "To run the commands, run this first:"
+echo
+echo "export SCTEAR_ROOT = \$PREFIX/opt/sctear-root/sctear.sh"
+echo
+echo "Then run:"
+echo
+echo "bash \$SCTEAR_ROOT help"
